@@ -4,6 +4,7 @@ import io.collective.SimpleAgedKache
 import junit.framework.TestCase.*
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Test
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
@@ -19,7 +20,7 @@ class SimpleAgedKacheTest {
         nonempty.put("anotherKey", "anotherValue", 4000)
     }
 
-    @Ignore
+    @Test
     fun isEmpty() {
         assertTrue(empty.isEmpty())
         assertFalse(nonempty.isEmpty())
