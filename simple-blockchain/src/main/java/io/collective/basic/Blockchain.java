@@ -1,39 +1,55 @@
 package io.collective.basic;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Blockchain {
+    private final List<Block> blocks = new LinkedList<>();
 
     public boolean isEmpty() {
-        return false;
+        return size() == 0;
     }
 
-    public void add(Block block) {
+    public void add(Block block) throws NoSuchAlgorithmException {
+        blocks.add(block);
     }
 
     public int size() {
-        return 0;
+        return blocks.size();
     }
 
     public boolean isValid() throws NoSuchAlgorithmException {
+        for (int i = 0; i < blocks.size(); i++) {
+            Block currentBlock = blocks.get(i);
 
-        // todo - check mined
+            // Check mined blocks are mined
+            if (!isMined(currentBlock)) {
+                return false;
+            }
 
-        // todo - check previous hash matches
+            // Check previous hash matches
+            if (i > 0) {
+                Block previousBlock = blocks.get(i - 1);
+                if (!currentBlock.getPreviousHash().equals(previousBlock.getHash())) {
+                    return false;
+                }
+            }
 
-        // todo - check hash is correctly calculated
-
-        return false;
+            // Check hash is correctly calculated
+            if (!currentBlock.getHash().equals(currentBlock.calculatedHash())) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    /// Supporting functions that you'll need.
-
     public static Block mine(Block block) throws NoSuchAlgorithmException {
-        Block mined = new Block(block.getPreviousHash(), block.getTimestamp(), block.getNonce());
-
-        while (!isMined(mined)) {
-            mined = new Block(mined.getPreviousHash(), mined.getTimestamp(), mined.getNonce() + 1);
-        }
+        int nonce = block.getNonce();
+        Block mined;
+        do {
+            mined = new Block(block.getPreviousHash(), block.getTimestamp(), nonce++);
+        } while (!isMined(mined));
         return mined;
     }
 
